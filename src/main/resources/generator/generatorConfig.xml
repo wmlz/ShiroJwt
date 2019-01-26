@@ -45,11 +45,11 @@
                         password="root">
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="com.wang.model.entity.reverse" targetProject="src/main/java"/>
+        <javaModelGenerator targetPackage="com.bocsoft.model.entity.reverse" targetProject="src/main/java"/>
 
         <sqlMapGenerator targetPackage="mapper.reverse" targetProject="src/main/resources"/>
 
-        <javaClientGenerator targetPackage="com.wang.mapper.reverse" targetProject="src/main/java"
+        <javaClientGenerator targetPackage="com.bocsoft.mapper.reverse" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
         <!--<table tableName="user">
