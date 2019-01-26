@@ -40,16 +40,16 @@
         </plugin>
 
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://127.0.0.1:3306/shirojwt?characterEncoding=UTF-8"
+                        connectionURL="jdbc:mysql://106.12.88.8:3306/shirojwt?characterEncoding=UTF-8"
                         userId="root"
-                        password="root">
+                        password="liuzhe1208">
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="com.bocsoft.model.entity.reverse" targetProject="src/main/java"/>
+        <javaModelGenerator targetPackage="com.bocsoft.model.entity" targetProject="src/main/java"/>
 
-        <sqlMapGenerator targetPackage="mapper.reverse" targetProject="src/main/resources"/>
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources"/>
 
-        <javaClientGenerator targetPackage="com.bocsoft.mapper.reverse" targetProject="src/main/java"
+        <javaClientGenerator targetPackage="com.bocsoft.mapper" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
         <!--<table tableName="user">
@@ -63,9 +63,9 @@
         </table>
         <table tableName="user_role">
             <generatedKey column="id" sqlStatement="JDBC"/>
-        </table>
-        <table tableName="role_permission">
-            <generatedKey column="id" sqlStatement="JDBC"/>
         </table>-->
+        <table tableName="organization">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
     </context>
 </generatorConfiguration>

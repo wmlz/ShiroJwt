@@ -25,13 +25,10 @@ public class BaseDto implements Serializable {
     @Max(value = 50, message = "每页条数不能大于50")
     private Integer rows;
 
-    /** 排序的列名 */
+    /** 排序条件 */
     @Transient
-    private String sidx;
-
-    /** 排序规则(DESC或者ESC) */
-    @Transient
-    private String sord;
+    private String sortCondition;
+    
 
     public Integer getPage() {
         return page;
@@ -49,19 +46,12 @@ public class BaseDto implements Serializable {
         this.rows = rows;
     }
 
-    public String getSidx() {
-        return sidx;
+    public String getSortCondition() {
+        return sortCondition;
     }
 
-    public void setSidx(String sidx) {
-        this.sidx = sidx;
+    public void setSortCondition(String sortCondition) {
+        this.sortCondition = sortCondition;
     }
-
-    public String getSord() {
-        return sord;
-    }
-
-    public void setSord(String sord) {
-        this.sord = sord;
-    }
+    
 }
