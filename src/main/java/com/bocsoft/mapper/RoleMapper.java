@@ -5,6 +5,7 @@ import com.bocsoft.model.UserDto;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * RoleMapper
@@ -19,5 +20,9 @@ public interface RoleMapper extends Mapper<RoleDto> {
      * @author Wang926454
      * @date 2018/8/31 11:30
      */
-    public List<RoleDto> findRoleByUser(UserDto userDto);
+    List<RoleDto> findRoleByUser(UserDto userDto);
+
+    int addUserRoles(Map param);
+
+    int delUserRoles(Map param);
 }

@@ -25,7 +25,27 @@
       <if test="username != null and username != '' ">
         AND u.username LIKE CONCAT('%',#{username},'%')
       </if>
+      <if test="id != null ">
+        AND u.id = #{id}
+      </if>
     </where>
   </select>
+
+  <insert id="addUserRoles" parameterType="java.util.Map">
+    INSERT INTO user_role
+    (user_id,role_id)
+    VALUES
+    <foreach collection="addRoles" item="item" separator="," >
+      (#{userId},#{item})
+    </foreach>
+  </insert>
+
+  <delete id="delUserRoles" parameterType="java.util.Map">
+    delete from user_role where user_id=#{userId}
+    and role_id in
+    <foreach collection="delRoles" item="item" separator="," open="(" close=")" >
+      #{item}
+    </foreach>
+  </delete>
 
 </mapper>

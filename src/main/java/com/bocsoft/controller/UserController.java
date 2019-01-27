@@ -1,5 +1,6 @@
 package com.bocsoft.controller;
 
+import com.bocsoft.model.RoleDto;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.bocsoft.model.common.BaseDto;
@@ -24,14 +25,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
  * UserController
+ *
  * @author Wang926454
  * @date 2018/8/29 15:45
  */
@@ -55,8 +59,9 @@ public class UserController {
 
     /**
      * 获取用户列表
-     * @param 
-     * @return java.util.Map<java.lang.String,java.lang.Object>
+     *
+     * @param
+     * @return java.util.Map<java.lang.String               ,               java.lang.Object>
      * @author Wang926454
      * @date 2018/8/30 10:41
      */
@@ -81,7 +86,8 @@ public class UserController {
 
     /**
      * 获取在线用户(查询Redis中的RefreshToken)
-     * @param 
+     *
+     * @param
      * @return com.bocsoft.model.common.ResponseBean
      * @author Wang926454
      * @date 2018/9/6 9:58
@@ -112,6 +118,7 @@ public class UserController {
 
     /**
      * 登录授权
+     *
      * @param userDto
      * @return com.bocsoft.model.common.ResponseBean
      * @author Wang926454
@@ -149,6 +156,7 @@ public class UserController {
 
     /**
      * 测试登录
+     *
      * @param
      * @return com.bocsoft.model.common.ResponseBean
      * @author Wang926454
@@ -167,6 +175,7 @@ public class UserController {
 
     /**
      * 测试登录注解(@RequiresAuthentication和subject.isAuthenticated()返回true一个性质)
+     *
      * @param
      * @return com.bocsoft.model.common.ResponseBean
      * @author Wang926454
@@ -180,8 +189,9 @@ public class UserController {
 
     /**
      * 获取指定用户
+     *
      * @param id
-     * @return java.util.Map<java.lang.String,java.lang.Object>
+     * @return java.util.Map<java.lang.String               ,               java.lang.Object>
      * @author Wang926454
      * @date 2018/8/30 10:42
      */
@@ -197,8 +207,9 @@ public class UserController {
 
     /**
      * 新增用户
+     *
      * @param userDto
-     * @return java.util.Map<java.lang.String,java.lang.Object>
+     * @return java.util.Map<java.lang.String               ,               java.lang.Object>
      * @author Wang926454
      * @date 2018/8/30 10:42
      */
@@ -228,8 +239,9 @@ public class UserController {
 
     /**
      * 更新用户
+     *
      * @param userDto
-     * @return java.util.Map<java.lang.String,java.lang.Object>
+     * @return java.util.Map<java.lang.String               ,               java.lang.Object>
      * @author Wang926454
      * @date 2018/8/30 10:42
      */
@@ -263,8 +275,9 @@ public class UserController {
 
     /**
      * 删除用户
+     *
      * @param id
-     * @return java.util.Map<java.lang.String,java.lang.Object>
+     * @return java.util.Map<java.lang.String               ,               java.lang.Object>
      * @author Wang926454
      * @date 2018/8/30 10:43
      */
@@ -280,6 +293,7 @@ public class UserController {
 
     /**
      * 剔除在线用户
+     *
      * @param id
      * @return com.bocsoft.model.common.ResponseBean
      * @author Wang926454
@@ -295,5 +309,52 @@ public class UserController {
             }
         }
         throw new CustomException("剔除失败，Account不存在(Deletion Failed. Account does not exist.)");
+    }
+
+
+    /**
+     * @Description:  修改用户角色
+     * @Param: [userId, addList, delList]
+     * @return: com.bocsoft.model.common.ResponseBean
+     * @Author: zer0ne
+     * @Date: 2019/1/27 20:39
+     */
+    @PutMapping("/role/{userId}")
+    @RequiresPermissions(logical = Logical.AND, value = {"user:edit"})
+    @Transactional
+    public ResponseBean updateRole(@PathVariable("userId") Integer userId,
+                                   @RequestParam String addList,
+                                   @RequestParam String delList) {
+        UserDto user = userService.selectByPrimaryKey(userId);
+        List<RoleDto> roles = userService.findRoleByUser(user);
+        List<Integer> curRoles = new ArrayList<>();
+        for (RoleDto item : roles) {
+            curRoles.add(item.getId());
+        }
+        List<Integer> addRoles = Arrays.asList(StringUtil.str2IntArry(addList));
+        List<Integer> delRoles = Arrays.asList(StringUtil.str2IntArry(delList));
+        List<Object> intersection = new ArrayList<>(addRoles);
+        intersection.retainAll(curRoles);
+        if (intersection.size() > 0 || !curRoles.containsAll(delRoles)) {
+            throw new CustomException("修改失败，添加了已有角色或删除了不存在的角色");
+        }
+        int insertNum = 0;
+        int delNum = 0;
+        if (addRoles.size() != 0) {
+            insertNum = userService.addUserRoles(userId, StringUtil.str2IntArry(addList));
+        }
+        if (delRoles.size() != 0) {
+            delNum = userService.delUserRoles(userId, StringUtil.str2IntArry(delList));
+        }
+        //删除redis中的缓存
+        if (JedisUtil.exists(Constant.PREFIX_SHIRO_CACHE + user.getAccount())) {
+            JedisUtil.delKey(Constant.PREFIX_SHIRO_CACHE + user.getAccount());
+        }
+        List<RoleDto> newRoles = userService.findRoleByUser(user);
+        Map<String,Object> result = new HashMap<>();
+        result.put("insertNum",insertNum);
+        result.put("delNum",delNum);
+        result.put("newRoles",newRoles);
+        return new ResponseBean(HttpStatus.OK.value(), "修改成功", result);
     }
 }

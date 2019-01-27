@@ -13,6 +13,7 @@ public class StringUtil {
 
     /**
      * String为空判断(不允许空格)
+     *
      * @param str
      * @return boolean
      * @author Wang926454
@@ -24,6 +25,7 @@ public class StringUtil {
 
     /**
      * String不为空判断(不允许空格)
+     *
      * @param str
      * @return boolean
      * @author Wang926454
@@ -35,6 +37,7 @@ public class StringUtil {
 
     /**
      * Byte数组为空判断
+     *
      * @param bytes
      * @return boolean
      * @author Wang926454
@@ -47,6 +50,7 @@ public class StringUtil {
 
     /**
      * Byte数组不为空判断
+     *
      * @param bytes
      * @return boolean
      * @author Wang926454
@@ -58,6 +62,7 @@ public class StringUtil {
 
     /**
      * 驼峰转下划线工具
+     *
      * @param param
      * @return java.lang.String
      * @author Wang926454
@@ -84,6 +89,7 @@ public class StringUtil {
 
     /**
      * 下划线转驼峰工具
+     *
      * @param param
      * @return java.lang.String
      * @author Wang926454
@@ -112,6 +118,7 @@ public class StringUtil {
 
     /**
      * 在字符串两周添加''
+     *
      * @param param
      * @return java.lang.String
      * @author Wang926454
@@ -119,5 +126,25 @@ public class StringUtil {
      */
     public static String addSingleQuotes(String param) {
         return "\'" + param + "\'";
+    }
+
+
+    /**
+     * @Description:  把"1,2,3"这样的字符串转换为[1,2,3]
+     * @Param: [str]
+     * @return: Integer[]
+     * @Author: zer0ne
+     * @Date: 2019/1/27 18:27
+     */
+    public static Integer[] str2IntArry(String str) {
+        if (isBlank(str)){
+            return new Integer[0];
+        }
+        String[] arr = str.split(",");
+        Integer[] arry = new Integer[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            arry[i] = Integer.parseInt(arr[i]);
+        }
+        return arry;
     }
 }
