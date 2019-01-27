@@ -1,6 +1,7 @@
 package com.bocsoft.config.shiro;
 
 import com.bocsoft.config.shiro.jwt.JwtToken;
+import com.bocsoft.exception.CustomUnauthorizedException;
 import com.bocsoft.util.JedisUtil;
 import com.bocsoft.mapper.PermissionMapper;
 import com.bocsoft.mapper.RoleMapper;
@@ -62,6 +63,9 @@ public class UserRealm extends AuthorizingRealm {
         userDto.setAccount(account);
         // 查询用户角色
         List<RoleDto> roleDtos = roleMapper.findRoleByUser(userDto);
+        if (roleDtos.size()<=0) {
+            throw new CustomUnauthorizedException("该用户没有配置角色(User do not have role)");
+        }
         for (int i = 0, roleLen = roleDtos.size(); i < roleLen; i++) {
             RoleDto roleDto = roleDtos.get(i);
             // 添加角色

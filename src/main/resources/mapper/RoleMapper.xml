@@ -15,8 +15,8 @@
       r.name as name
     FROM
       user u
-    LEFT JOIN user_role ur ON u.id = ur.user_id
-    LEFT JOIN role r ON r.id = ur.role_id
+    INNER JOIN user_role ur ON u.id = ur.user_id
+    INNER JOIN role r ON r.id = ur.role_id
     <where>
       1 = 1
       <if test="account != null and account != '' ">

@@ -9,4 +9,13 @@
     <result column="org_name" jdbcType="VARCHAR" property="orgName" />
     <result column="parent_id" jdbcType="INTEGER" property="parentId" />
   </resultMap>
+
+  <delete id="deleteByPkList" parameterType="List">
+    DELETE FROM organization
+    WHERE id IN 
+    <foreach collection="array" item="item" separator="," open="(" close=")">
+      #{item}
+    </foreach>
+  </delete>
+
 </mapper>

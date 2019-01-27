@@ -1,5 +1,6 @@
 package com.bocsoft.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.bocsoft.exception.CustomException;
 import com.bocsoft.model.UserDto;
 import com.bocsoft.model.common.BaseDto;
@@ -14,11 +15,11 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,15 +37,14 @@ public class OrgController {
     }
 
 
-
     @GetMapping
-   // @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
+    // @RequiresPermissions(logical = Logical.AND, value = {"user:view"})
     public ResponseBean user(@Validated BaseDto baseDto) {
         if (baseDto.getPage() == null || baseDto.getRows() == null) {
             baseDto.setPage(1);
             baseDto.setRows(10);
         }
-        PageHelper.startPage(baseDto.getPage(), baseDto.getRows(),baseDto.getSortCondition());
+        PageHelper.startPage(baseDto.getPage(), baseDto.getRows(), baseDto.getSortCondition());
         List<Organization> orgList = organizationService.selectAll();
         PageInfo<Organization> selectPage = new PageInfo<Organization>(orgList);
         if (orgList == null || orgList.size() <= 0) {
@@ -54,5 +54,21 @@ public class OrgController {
         result.put("count", selectPage.getTotal());
         result.put("data", selectPage.getList());
         return new ResponseBean(HttpStatus.OK.value(), "查询成功(Query was successful)", result);
+    }
+
+    @DeleteMapping("/delete")
+    @Transactional
+    public ResponseBean deleteByPkList(@RequestBody JSONObject reqObj) {
+        List<Integer> a= (List<Integer>)reqObj.get("pkList");
+        System.out.println(a);
+        Integer[] b = a.toArray(new Integer[0]);
+        for (int i=0;i<b.length;i++){
+            System.out.println(b[i]);
+        }
+
+        int num = organizationService.deleteByPkList(b);
+        Map<String, Object> result = new HashMap<String, Object>(16);
+        result.put("count", num);
+        return new ResponseBean(HttpStatus.OK.value(), "删除成功", result);
     }
 }
