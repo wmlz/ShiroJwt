@@ -1,6 +1,7 @@
 package com.bocsoft.service.impl;
 
 import com.bocsoft.mapper.OrganizationMapper;
+import com.bocsoft.model.OrgDto;
 import com.bocsoft.model.UserDto;
 import com.bocsoft.model.entity.Organization;
 import com.bocsoft.service.IOrganizationService;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class OrganizationServiceImpl extends BaseServiceImpl<Organization> implements IOrganizationService {
+public class OrganizationServiceImpl extends BaseServiceImpl<OrgDto> implements IOrganizationService {
 
     @Autowired
     private  OrganizationMapper organizationMapper;
